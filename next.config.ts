@@ -1,11 +1,28 @@
 import type { NextConfig } from "next";
-import { Niconne } from "next/font/google";
 
 const nextConfig: NextConfig = {
 	/* config options here */
 	reactCompiler: true,
+
 	experimental: {
 		turbopackFileSystemCacheForDev: true,
+		useCache: true,
+	},
+
+	// This is required to support PostHog trailing slash API requests
+	skipTrailingSlashRedirect: true,
+
+	async rewrites() {
+		return [
+			{
+				source: "/ingest/static/:path*",
+				destination: "https://eu-assets.i.posthog.com/static/:path*",
+			},
+			{
+				source: "/ingest/:path*",
+				destination: "https://eu.i.posthog.com/:path*",
+			},
+		];
 	},
 };
 
