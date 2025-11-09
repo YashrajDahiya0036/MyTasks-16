@@ -55,14 +55,28 @@ export async function POST(req: NextRequest) {
     }
 }
 
-export async function GET() {
-    try {
-        await connectDB();
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  try {
+    // Connect to database
+    await connectDB();
 
-        const events = await Event.find().sort({ createdAt: -1 });
+    // Query all events
+    const events = await Event.find({}).lean();
 
-        return NextResponse.json({ message: 'Events fetched successfully', events }, { status: 200 });
-    } catch (e) {
-        return NextResponse.json({ message: 'Event fetching failed', error: e }, { status: 500 });
+    // Return successful response
+    return NextResponse.json(
+      { message: 'Events fetched successfully', events },
+      { status: 200 }
+    );
+  } catch (error) {
+    // Log error in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching events:', error);
     }
+
+    return NextResponse.json(
+      { message: 'Failed to fetch events' },
+      { status: 500 }
+    );
+  }
 }

@@ -20,14 +20,14 @@ const Page = async () => {
             headers: { 
                 'Content-Type': 'application/json' 
             },
+            cache: 'no-store' // Ensure fresh data
         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        const events = data.events || [];
+        const { events } = await response.json();
 
         return (
             <section>
