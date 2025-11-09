@@ -43,6 +43,9 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
     let event;
     try {
         const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
             next: { revalidate: 60 }
         });
 

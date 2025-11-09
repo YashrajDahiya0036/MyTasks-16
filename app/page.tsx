@@ -17,7 +17,9 @@ const Page = async () => {
     const baseUrl = getBaseUrl();
     try {
         const response = await fetch(`${baseUrl}/api/events`, {
-            headers: { accept: "application/json" },
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
         });
 
         if (!response.ok) {
