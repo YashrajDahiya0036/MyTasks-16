@@ -10,15 +10,24 @@ const Page = async () => {
 	cacheLife("hours");
 
 	const base =
-		process.env.NEXT_PUBLIC_BASE_URL ||
 		(process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ||
+		process.env.NEXT_PUBLIC_BASE_URL ||
 		"http://localhost:3000";
 
-	const response = await fetch(`${base}/api/events`, {
+	const res = await fetch(`${base}/api/events`, {
 		headers: { accept: "application/json" },
 	});
-
-	const { events } = await response.json();
+	if (!res.ok) {
+		const body = await res.text();
+		console.error(
+			"Events fetch failed:",
+			res.status,
+			res.statusText,
+			body.slice(0, 200)
+		);
+		throw new Error(`Events fetch failed: ${res.status}`);
+	}
+	const { events } = await res.json();
 	// const response = await fetch(`${BASE_URL}/api/events`);
 	// const { events } = await response.json();
 
