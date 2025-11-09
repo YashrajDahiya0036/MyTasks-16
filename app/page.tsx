@@ -3,33 +3,41 @@ import EventCard from "@/components/EventCard";
 import { IEvent } from "@/database";
 import { cacheLife } from "next/cache";
 
-// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const getBaseUrl = () => {
+	if (typeof window !== "undefined") return ""; // Use relative URL on client
+	if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+	if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
+	return "http://localhost:3000";
+};
 
 const Page = async () => {
 	"use cache";
 	cacheLife("hours");
 
-	const base =
-		(process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ||
-		process.env.NEXT_PUBLIC_BASE_URL ||
-		"http://localhost:3000";
-
-	const res = await fetch(`${base}/api/events`, {
+	const baseUrl = getBaseUrl();
+	const response = await fetch(`${baseUrl}/api/events`, {
 		headers: { accept: "application/json" },
 	});
-	if (!res.ok) {
-		const body = await res.text();
-		console.error(
-			"Events fetch failed:",
-			res.status,
-			res.statusText,
-			body.slice(0, 200)
-		);
-		throw new Error(`Events fetch failed: ${res.status}`);
-	}
-	const { events } = await res.json();
-	// const response = await fetch(`${BASE_URL}/api/events`);
-	// const { events } = await response.json();
+	const { events } = await response.json();
+	// const base =
+	// 	(process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ||
+	// 	process.env.NEXT_PUBLIC_BASE_URL ||
+	// 	"http://localhost:3000";
+
+	// const res = await fetch(`${base}/api/events`, {
+	// 	headers: { accept: "application/json" },
+	// });
+	// if (!res.ok) {
+	// 	const body = await res.text();
+	// 	console.error(
+	// 		"Events fetch failed:",
+	// 		res.status,
+	// 		res.statusText,
+	// 		body.slice(0, 200)
+	// 	);
+	// 	throw new Error(`Events fetch failed: ${res.status}`);
+	// }
+	// const { events } = await res.json();
 
 	return (
 		<section>
